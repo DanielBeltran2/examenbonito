@@ -10,10 +10,10 @@ var con = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "example",
-    database: "test1"
+    database: "carros"
 });
 
-app.get('/todo',(req,res) =>{
+app.get('/carros',(req,res) =>{
     con.query("select * from Carros",
         function(err,result){
             if(err){
@@ -22,6 +22,36 @@ app.get('/todo',(req,res) =>{
             res.status(200).json(result);
         });
 });
+
+app.get('/carros/:id',(req,res) =>{
+    con.query("select * from Carros where id = ?",[id],
+        function(err,result){
+            if(err){
+                throw err;
+            }
+            if(!!result && result.lenght > 0){
+                res.status(200).json(result);
+            }else{
+                res.status(404).json({});
+            }
+        });
+});
+
+app.get('/carros/:id',(req,res) =>{
+    const marca = req.body.marca;
+    const nombre = req.body.nombre;
+
+    let sql = "select * from Carros (marca,nombre) VALUES (marca,nombre)"
+    con.query(sql,[marca],(err, result)=>{
+        if(err){
+            throw err;
+        }
+        else{
+            res.status(200).json({});
+        }
+    });
+});
+
 
 app.listen(port, ()=>{
     console.log('Example app listening on port ${port}')
